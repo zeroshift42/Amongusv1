@@ -1,4 +1,9 @@
-import { randomBytes, randomInt, timingSafeEqual } from "node:crypto";
+import {
+  randomBytes,
+  randomInt,
+  randomUUID,
+  timingSafeEqual,
+} from "node:crypto";
 import {
   ROOMS,
   TERMINALS,
@@ -78,6 +83,10 @@ export interface Room {
   winner?: string;
   reason?: string;
   notice?: string;
+  meetingResult?: {
+    id: string;
+    player: { id: string; name: string; color: number } | null;
+  };
 }
 export const DOORS = [
   { x: 930, y: 505, w: 130, h: 24 },
@@ -200,6 +209,7 @@ export function start(r: Room) {
   r.sabotageCooldown = 20;
   r.meeting = null;
   r.winner = r.reason = undefined;
+  r.meetingResult = undefined;
   r.notice = "¡Comienza la misión!";
 }
 export function finish(r: Room, winner: string, reason: string) {
@@ -328,6 +338,10 @@ export function resolveMeeting(r: Room) {
     out.alive = false;
     r.notice = `${out.name} fue expulsado al espacio.`;
   } else r.notice = "Nadie fue expulsado.";
+  r.meetingResult = {
+    id: randomUUID(),
+    player: out ? { id: out.id, name: out.name, color: out.color } : null,
+  };
   r.phase = "playing";
   r.meeting = null;
   for (const p of r.players.values()) {
@@ -627,6 +641,7 @@ export function snapshot(r: Room, viewer?: Player) {
     sabotageCooldown: r.sabotageCooldown,
     emergencies: viewer?.emergency ?? 0,
     notice: r.notice,
+    meetingResult: r.meetingResult,
     serverTime: r.time,
     doors: r.sabotage?.kind === "doors" ? DOORS : [],
   };

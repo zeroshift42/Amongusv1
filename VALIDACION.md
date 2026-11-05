@@ -14,7 +14,7 @@ Versión 0.1.0, preparada el 2 de noviembre de 2026. **Versión funcional inicia
 ## Comprobaciones ejecutadas
 
 - `npm run check`: TypeScript sin errores.
-- `npm test`: **11 pruebas aprobadas**, sin pruebas omitidas.
+- `npm test`: **12 pruebas aprobadas**, sin pruebas omitidas.
 - `npm run build`: frontend Vite y servidor compilados correctamente.
 - `npm audit --omit=dev --audit-level=high`: cero vulnerabilidades informadas en dependencias de ejecución en la consulta realizada. Esto no sustituye una auditoría de seguridad.
 - Navegador Chrome del entorno cloud: pantalla inicial, ingreso a sala real, partida con tres clientes de prueba y un navegador, representación Phaser, reconexión tras recarga, reunión de emergencia y entrega de frase predefinida comprobados. Los clientes de prueba no forman parte del juego entregado.
@@ -61,7 +61,7 @@ La última ejecución de carga tardó 5,39 segundos: 2.600 confirmaciones, media
 ## Pendientes respecto del documento original
 
 - Verificar disponibilidad y latencia desde la escuela, partida completa de 15–20 minutos, 26 navegadores físicos y controles táctiles en Android.
-- Completar animaciones específicas de caída, eliminación, transición de ventilaciones, expulsión espacial, victoria y derrota. Actualmente algunas transiciones usan cambios de estado o avisos, sin la secuencia cinematográfica solicitada.
+- Implementadas presentación animada del rol, expulsión espacial, transición a fantasma y entrada del panel final. Se pueden omitir y respetan movimiento reducido. Pendientes: eliminación detallada, transición de ventilaciones y secuencias diferenciadas de victoria/derrota.
 - Añadir puertas automáticas normales, accesorios/patrones por personaje, minimapa permanente, estadísticas individuales completas y optimización avanzada.
 - Pruebas de accesibilidad con el grupo, balance de roles/tareas, revisión externa de seguridad y soporte de desconexiones prolongadas en redes escolares.
 

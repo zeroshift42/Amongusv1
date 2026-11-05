@@ -199,3 +199,25 @@ test("vote ties and skip do not eject, all impostors removed ends game, all task
   tick(another.room, 0.05);
   assert.equal(another.room.winner, "Tripulantes");
 });
+
+test("ejection presentation reveals no secret role and clears on a new game", () => {
+  const { room, crew, impostor } = game();
+  beginMeeting(room, "Reunión");
+  for (const p of room.players.values())
+    room.meeting!.votes.set(p.id, crew[0].id);
+  resolveMeeting(room);
+  const result = snapshot(room, crew[1]).meetingResult!;
+  assert.deepEqual(Object.keys(result.player!).sort(), ["color", "id", "name"]);
+  assert.equal(result.player!.id, crew[0].id);
+  assert.ok(result.id);
+  const previousId = result.id;
+  beginMeeting(room, "Otra reunión");
+  for (const p of room.players.values())
+    if (p.alive) room.meeting!.votes.set(p.id, null);
+  resolveMeeting(room);
+  assert.equal(room.meetingResult!.player, null);
+  assert.notEqual(room.meetingResult!.id, previousId);
+  room.phase = "lobby";
+  start(room);
+  assert.equal(snapshot(room, impostor).meetingResult, undefined);
+});

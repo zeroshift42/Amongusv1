@@ -38,6 +38,7 @@ let remembered = JSON.parse(sessionStorage.getItem("nave26.session") || "null"),
   joystick = { x: 0, y: 0 };
 let soundContext: AudioContext | undefined;
 let lastUi = "";
+let cinematicTimer: ReturnType<typeof setTimeout> | undefined;
 const taskNames: Record<string, string> = {
   wires: "Conectar cables",
   cables: "Conectar cables",
@@ -213,6 +214,7 @@ socket.on("connect_error", () =>
   toast("No se pudo conectar con la nave. Revisá tu conexión."),
 );
 socket.on("state", (s: Data) => {
+  const previous = state;
   state = s;
   if (!myId) myId = s.me;
   const me = s.players.find((p: Data) => p.id === myId);
@@ -227,19 +229,53 @@ socket.on("state", (s: Data) => {
           ? "Saboteá la misión sin ser descubierto."
           : "Completá tus tareas. Descubrí a los impostores.",
         me.role === "impostor" ? "#ff5866" : "#50d7cb",
+        "role",
+        me.color,
       );
       sound(me.role === "impostor" ? 180 : 780);
     }
     lastPhase = s.phase;
   }
-  if (me && !me.alive && lastAlive) {
+  const result = s.meetingResult;
+  const newResult =
+    previous &&
+    result &&
+    result.id !== previous.meetingResult?.id &&
+    previous.phase === "meeting";
+  if (newResult) {
+    announce(
+      result.player
+        ? `${result.player.name} fue expulsado`
+        : "NADIE FUE EXPULSADO",
+      result.player
+        ? "La nave continúa su viaje."
+        : "La tripulación decidió seguir investigando.",
+      "#9fa9f7",
+      result.player ? "ejection" : "skip",
+      result.player?.color ?? 0,
+    );
+  }
+  if (s.phase === "lobby") {
+    clearTimeout(cinematicTimer);
+    $("#flash").className = "";
+  }
+  if (
+    me &&
+    !me.alive &&
+    lastAlive &&
+    !newResult &&
+    previous?.phase === "playing"
+  ) {
     announce(
       "SOS UN FANTASMA",
       "Todavía podés ayudar completando tus tareas.",
       "#9fa9f7",
+      "ghost",
+      me.color,
     );
     lastAlive = false;
-  } else if (me?.alive) lastAlive = true;
+  }
+  if (me) lastAlive = me.alive;
   const ui = JSON.stringify([
     s.phase,
     s.paused,
@@ -272,12 +308,26 @@ socket.on("state", (s: Data) => {
   }
   scene?.sync(s);
 });
-function announce(title: string, sub: string, color: string) {
+function announce(
+  title: string,
+  sub: string,
+  color: string,
+  kind = "role",
+  suit = 0,
+) {
+  clearTimeout(cinematicTimer);
   const f = $("#flash");
-  f.innerHTML = `<div style="--accent:${color}"><div class="eyebrow">MISIÓN NAVE 26</div><h1>${esc(title)}</h1><p>${esc(sub)}</p></div>`;
+  f.className = "";
+  f.innerHTML = `<div class="cinematic ${kind}" style="--accent:${color}" role="status"><div class="cinematic-stars"></div><div class="eyebrow">MISIÓN NAVE 26</div><div class="cinematic-astronaut">${astronaut(COLORS[suit % COLORS.length], 160)}</div><h1>${esc(title)}</h1><p>${esc(sub)}</p><button class="cinematic-dismiss" type="button">Continuar →</button></div>`;
   f.className = "active";
-  setTimeout(() => (f.className = ""), 3000);
+  const dismiss = () => {
+    clearTimeout(cinematicTimer);
+    f.className = "";
+  };
+  f.querySelector("button")!.addEventListener("click", dismiss);
+  cinematicTimer = setTimeout(dismiss, 3800);
 }
+
 function player() {
   return state?.players.find((p: Data) => p.id === myId);
 }
@@ -723,15 +773,13 @@ function renderTask() {
     );
   }
   if (kind === "shields")
-    document
-      .querySelectorAll("[data-shield]")
-      .forEach(
-        (el) =>
-          ((el as HTMLElement).onclick = () =>
-            void taskSend({
-              value: Number((el as HTMLElement).dataset.shield),
-            })),
-      );
+    document.querySelectorAll("[data-shield]").forEach(
+      (el) =>
+        ((el as HTMLElement).onclick = () =>
+          void taskSend({
+            value: Number((el as HTMLElement).dataset.shield),
+          })),
+    );
   if (kind === "card") {
     let start = 0,
       origin = 0;
@@ -810,15 +858,13 @@ function renderTask() {
     };
     update();
     taskTimer = window.setInterval(update, 150);
-    document
-      .querySelectorAll("[data-sample]")
-      .forEach(
-        (el) =>
-          ((el as HTMLElement).onclick = () =>
-            void taskSend({
-              value: Number((el as HTMLElement).dataset.sample),
-            })),
-      );
+    document.querySelectorAll("[data-sample]").forEach(
+      (el) =>
+        ((el as HTMLElement).onclick = () =>
+          void taskSend({
+            value: Number((el as HTMLElement).dataset.sample),
+          })),
+    );
   }
   if (kind === "filter") {
     const debris = $("#debris");
@@ -858,15 +904,13 @@ function renderTask() {
     taskAnimation = requestAnimationFrame(animate);
     $("#calibrate").onclick = () => void taskSend({ value });
   }
-  document
-    .querySelectorAll("[data-generic]")
-    .forEach(
-      (el) =>
-        ((el as HTMLElement).onclick = () =>
-          void taskSend({
-            value: Number((el as HTMLElement).dataset.generic),
-          })),
-    );
+  document.querySelectorAll("[data-generic]").forEach(
+    (el) =>
+      ((el as HTMLElement).onclick = () =>
+        void taskSend({
+          value: Number((el as HTMLElement).dataset.generic),
+        })),
+  );
 }
 interface Avatar {
   root: Phaser.GameObjects.Container;

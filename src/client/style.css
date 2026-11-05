@@ -1560,3 +1560,107 @@ body[data-quality="low"] .hero-crew > div {
     transition: none !important;
   }
 }
+
+/* Cinemáticas originales, independientes de las actualizaciones de red. */
+#flash.active {
+  animation: none;
+}
+.cinematic {
+  position: relative;
+  width: 100%;
+  padding: 24px;
+  overflow: hidden;
+  animation: cinematic-in 0.35s ease-out both;
+}
+#flash h1 {
+  font-size: clamp(28px, 5vw, 64px);
+  letter-spacing: 0.08em;
+  overflow-wrap: anywhere;
+}
+.cinematic-astronaut {
+  position: relative;
+  margin: 24px auto;
+  filter: drop-shadow(0 0 40px var(--accent));
+}
+.role .cinematic-astronaut {
+  animation: suit-arrival 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+.ejection .cinematic-astronaut {
+  animation: space-ejection 3.8s linear both;
+}
+.skip .cinematic-astronaut {
+  opacity: 0.25;
+}
+.ghost .cinematic-astronaut {
+  animation: ghost-rise 3.8s ease-out both;
+}
+.cinematic-stars {
+  position: absolute;
+  inset: 0;
+  opacity: 0.4;
+  background-image: radial-gradient(circle, #fff 1px, transparent 2px);
+  background-size: 67px 59px;
+  transform: rotate(-12deg);
+}
+.cinematic h1,
+.cinematic p,
+.cinematic .eyebrow {
+  position: relative;
+}
+.cinematic-dismiss {
+  position: relative;
+  pointer-events: auto;
+  margin-top: 20px;
+}
+.results {
+  animation: cinematic-in 0.6s ease-out both;
+}
+.results-crew > div {
+  animation: suit-arrival 0.7s ease-out both;
+}
+@keyframes cinematic-in {
+  from {
+    opacity: 0;
+    transform: scale(0.94);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+@keyframes suit-arrival {
+  from {
+    opacity: 0;
+    transform: translateY(45px) scale(0.7);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+@keyframes space-ejection {
+  from {
+    transform: translateX(-65vw) rotate(-100deg) scale(0.8);
+  }
+  to {
+    transform: translateX(65vw) rotate(480deg) scale(0.45);
+  }
+}
+@keyframes ghost-rise {
+  from {
+    opacity: 1;
+    transform: translateY(25px);
+  }
+  to {
+    opacity: 0.35;
+    transform: translateY(-35px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cinematic,
+  .cinematic-astronaut,
+  .results,
+  .results-crew > div {
+    animation: none !important;
+  }
+}
