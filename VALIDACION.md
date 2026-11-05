@@ -61,7 +61,7 @@ La última ejecución de carga tardó 5,39 segundos: 2.600 confirmaciones, media
 ## Pendientes respecto del documento original
 
 - Verificar disponibilidad y latencia desde la escuela, partida completa de 15–20 minutos, 26 navegadores físicos y controles táctiles en Android.
-- Implementadas presentación animada del rol, expulsión espacial, transición a fantasma y entrada del panel final. Se pueden omitir y respetan movimiento reducido. Pendientes: eliminación detallada, transición de ventilaciones y secuencias diferenciadas de victoria/derrota.
+- Implementadas presentación animada del rol, expulsión espacial, transición a fantasma y entrada del panel final. Se pueden omitir y respetan movimiento reducido. Añadidas eliminación sin violencia gráfica, caída de jugadores observados y entrada/salida de conductos para el propio jugador y el docente. No se transmiten datos nuevos de jugadores ocultos. Pendientes: secuencias diferenciadas de victoria/derrota.
 - Añadir puertas automáticas normales, accesorios/patrones por personaje, minimapa permanente, estadísticas individuales completas y optimización avanzada.
 - Pruebas de accesibilidad con el grupo, balance de roles/tareas, revisión externa de seguridad y soporte de desconexiones prolongadas en redes escolares.
 

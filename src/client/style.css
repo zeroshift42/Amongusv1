@@ -1664,3 +1664,59 @@ body[data-quality="low"] .hero-crew > div {
     animation: none !important;
   }
 }
+
+/* Eliminación sin violencia gráfica: impacto del traje y ascenso del fantasma. */
+.elimination .cinematic-astronaut {
+  animation: suit-disabled 3.8s ease-in-out both;
+}
+.elimination .cinematic-astronaut::after {
+  content: "";
+  position: absolute;
+  width: 180px;
+  height: 180px;
+  border: 4px solid #ff5866;
+  border-radius: 50%;
+  left: calc(50% - 90px);
+  top: -10px;
+  animation: suit-impact 0.7s ease-out both;
+}
+@keyframes suit-disabled {
+  0% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  8% {
+    transform: translateX(-18px) rotate(-12deg);
+  }
+  16% {
+    transform: translateX(16px) rotate(12deg);
+  }
+  28% {
+    transform: translateY(22px) rotate(70deg);
+    opacity: 1;
+  }
+  55% {
+    transform: translateY(0) rotate(0);
+    opacity: 0.5;
+  }
+  100% {
+    transform: translateY(-40px);
+    opacity: 0.35;
+  }
+}
+@keyframes suit-impact {
+  from {
+    transform: scale(0.4);
+    opacity: 1;
+  }
+  to {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .elimination .cinematic-astronaut::after {
+    animation: none;
+    display: none;
+  }
+}

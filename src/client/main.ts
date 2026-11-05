@@ -267,10 +267,10 @@ socket.on("state", (s: Data) => {
     previous?.phase === "playing"
   ) {
     announce(
-      "SOS UN FANTASMA",
+      "TE HAN ELIMINADO",
       "Todavía podés ayudar completando tus tareas.",
       "#9fa9f7",
-      "ghost",
+      "elimination",
       me.color,
     );
     lastAlive = false;
@@ -932,6 +932,7 @@ class ShipScene extends Phaser.Scene {
   lastMove = 0;
   worldReady = false;
   currentState: Data | null = null;
+  effects = new Set<Phaser.GameObjects.Graphics>();
   constructor() {
     super("ship");
   }
@@ -1173,10 +1174,53 @@ class ShipScene extends Phaser.Scene {
   }
   sync(s: Data) {
     if (!this.worldReady) return;
+    const previous = this.currentState;
+    if (previous?.phase !== s.phase) {
+      for (const effect of this.effects) {
+        this.tweens.killTweensOf(effect);
+        effect.destroy();
+      }
+      this.effects.clear();
+    }
+    const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (!reduced && previous?.phase === "playing" && s.phase === "playing") {
+      for (const body of s.bodies || []) {
+        const before = previous.players.find((p: Data) => p.id === body.id);
+        if (
+          !before?.alive ||
+          previous.bodies?.some((b: Data) => b.id === body.id)
+        )
+          continue;
+        const avatar = this.avatars.get(body.id);
+        if (!avatar) continue;
+        const fall = this.add
+          .graphics()
+          .setPosition(body.x, body.y)
+          .setDepth(12);
+        this.drawAvatar(
+          { ...avatar, g: fall, data: before, moving: 0 },
+          this.time.now,
+        );
+        this.effects.add(fall);
+        this.tweens.add({
+          targets: fall,
+          angle: 85,
+          scaleY: 0.45,
+          alpha: 0,
+          duration: 650,
+          ease: "Cubic.easeIn",
+          onComplete: () => {
+            this.effects.delete(fall);
+            fall.destroy();
+          },
+        });
+      }
+    }
     this.currentState = s;
     const visible = new Set(s.players.map((p: Data) => p.id));
     for (const [id, a] of this.avatars) {
       if (!visible.has(id)) {
+        this.tweens.killTweensOf(a.root);
         a.root.destroy();
         this.avatars.delete(id);
       }
@@ -1208,6 +1252,44 @@ class ShipScene extends Phaser.Scene {
           moving: 0,
         };
         this.avatars.set(p.id, a);
+      }
+      if (a.data.vented !== p.vented && s.phase === "playing") {
+        this.tweens.killTweensOf(a.root);
+        if (reduced) a.root.setScale(p.vented ? 0.3 : 1);
+        else {
+          if (!p.vented) a.root.setPosition(p.x, p.y).setScale(0.25);
+          this.tweens.add({
+            targets: a.root,
+            scaleX: p.vented ? 0.3 : 1,
+            scaleY: p.vented ? 0.12 : 1,
+            duration: 380,
+            ease: "Cubic.easeInOut",
+          });
+          const hatch = this.add.graphics().setPosition(p.x, p.y).setDepth(9);
+          hatch.lineStyle(3, 0x66ded4, 0.8);
+          hatch.strokeEllipse(0, 8, 60, 24);
+          this.effects.add(hatch);
+          this.tweens.add({
+            targets: hatch,
+            scale: 1.7,
+            alpha: 0,
+            duration: 500,
+            onComplete: () => {
+              this.effects.delete(hatch);
+              hatch.destroy();
+            },
+          });
+        }
+        if (p.id === myId)
+          toast(
+            p.vented
+              ? "Dentro del conducto: elegí una salida."
+              : "Saliste del conducto.",
+          );
+      }
+      if (s.phase !== "playing") {
+        this.tweens.killTweensOf(a.root);
+        a.root.setScale(1);
       }
       a.tx = p.x;
       a.ty = p.y;
