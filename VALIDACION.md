@@ -1,6 +1,15 @@
 # Estado de entrega y validación — NAVE 26
 
-Versión 0.1.0, preparada el 2 de noviembre de 2026. **Versión funcional inicial, pendiente de publicación y aceptación en la escuela. No equivale a completar todas las exigencias del documento original ni al acabado de un videojuego comercial.**
+Versión 0.1.0, preparada el 2 de noviembre de 2026. **Versión funcional inicial, publicada en Render y pendiente de aceptación en la escuela. No equivale a completar todas las exigencias del documento original ni al acabado de un videojuego comercial.**
+
+## Publicación comprobada
+
+- Repositorio público: https://github.com/zeroshift42/Amongusv1
+- Juego: https://nave-26.onrender.com/
+- Render confirmó el despliegue `dep-dblv4561egvs73apoucg` como `live`, con el commit `598a638375d9ec824901cd3bc7c2ad81895c8c0b`, el 5/11/2026 UTC.
+- GitHub Actions completó correctamente tipos, pruebas, compilación y construcción Docker: https://github.com/zeroshift42/Amongusv1/actions/runs/41959161065
+- Pantalla inicial comprobada en Chrome sobre HTTPS; `/health` respondió 200.
+- Prueba sobre el servidor público: 26 clientes Socket.IO más un docente conectados por WSS; creación autenticada de sala, ingreso de todos e inicio sincronizado comprobados. Sala finalizada y jugadores de prueba retirados. No equivale a 26 navegadores físicos ni a una partida completa.
 
 ## Comprobaciones ejecutadas
 
@@ -51,9 +60,7 @@ La última ejecución de carga tardó 5,39 segundos: 2.600 confirmaciones, media
 
 ## Pendientes respecto del documento original
 
-- Publicar en un repositorio GitHub y desplegar en Render; no se crearon por falta de integraciones conectadas. No existe URL pública verificada de esta entrega.
-- Construir/ejecutar la imagen Docker en una máquina con Docker: el ejecutable no está disponible en este entorno. Se incluyen Dockerfile y un flujo de GitHub Actions que realiza esa comprobación.
-- Verificar HTTPS/WSS en Render, disponibilidad y latencia real, partida completa de 15–20 minutos, 26 navegadores físicos y controles táctiles en Android.
+- Verificar disponibilidad y latencia desde la escuela, partida completa de 15–20 minutos, 26 navegadores físicos y controles táctiles en Android.
 - Completar animaciones específicas de caída, eliminación, transición de ventilaciones, expulsión espacial, victoria y derrota. Actualmente algunas transiciones usan cambios de estado o avisos, sin la secuencia cinematográfica solicitada.
 - Añadir puertas automáticas normales, accesorios/patrones por personaje, minimapa permanente, estadísticas individuales completas y optimización avanzada.
 - Pruebas de accesibilidad con el grupo, balance de roles/tareas, revisión externa de seguridad y soporte de desconexiones prolongadas en redes escolares.

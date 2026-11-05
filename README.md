@@ -2,7 +2,15 @@
 
 Juego original de deducción social espacial para navegadores, inspirado en las mecánicas de Among Us. Recursos visuales propios, sin sprites, sonidos ni mapas del juego comercial. Interfaz en español, 26 plazas de estudiantes más un docente independiente. No utiliza IA, publicidad, cuentas estudiantiles ni servicios de seguimiento.
 
-## Publicación sin instalar nada en la computadora
+## Jugar en línea
+
+- Juego publicado: https://nave-26.onrender.com/
+- Código: https://github.com/zeroshift42/Amongusv1
+- Alojamiento: un Web Service Docker de Render, plan Free.
+
+El docente selecciona **Soy docente** y utiliza la contraseña configurada en `ADMIN_PASSWORD`, disponible para el propietario en Render → servicio `nave-26` → Environment. La contraseña no está en el repositorio. Al crear la sala, comparte únicamente el enlace del juego y el código con los estudiantes.
+
+## Publicar una instalación propia
 
 El destino previsto es un **Web Service de Render**, no un Static Site ni GitHub Pages: hace falta un proceso Node permanente para compartir la partida.
 
