@@ -14,7 +14,7 @@ Versión 0.1.0, preparada el 2 de noviembre de 2026. **Versión funcional inicia
 ## Comprobaciones ejecutadas
 
 - `npm run check`: TypeScript sin errores.
-- `npm test`: **12 pruebas aprobadas**, sin pruebas omitidas.
+- `npm test`: **13 pruebas aprobadas**, sin pruebas omitidas.
 - `npm run build`: frontend Vite y servidor compilados correctamente.
 - `npm audit --omit=dev --audit-level=high`: cero vulnerabilidades informadas en dependencias de ejecución en la consulta realizada. Esto no sustituye una auditoría de seguridad.
 - Navegador Chrome del entorno cloud: pantalla inicial, ingreso a sala real, partida con tres clientes de prueba y un navegador, representación Phaser, reconexión tras recarga, reunión de emergencia y entrega de frase predefinida comprobados. Los clientes de prueba no forman parte del juego entregado.
@@ -49,7 +49,7 @@ La última ejecución de carga tardó 5,39 segundos: 2.600 confirmaciones, media
 ## Implementado con simplificaciones
 
 - Astronautas procedurales con piernas animadas, respiración, sombras y fantasmas; nave original de 13 sectores, mapa general y seguimiento de cámara.
-- Las posiciones de otros jugadores se filtran en el servidor según visión y paredes. El plano y la decoración siguen visibles: no se implementó una máscara de iluminación con oclusión completa de todos los objetos.
+- Las posiciones de otros jugadores se filtran en el servidor según visión y paredes. La vista de juego ahora oscurece el exterior del campo de visión con rayos que se detienen en las paredes. El alcance proviene del servidor y disminuye durante el sabotaje de luces. El plano general conserva la geometría de la nave; no revela jugadores ocultos. Los fantasmas y el docente mantienen visión amplia.
 - Diez minijuegos funcionales, algunos deliberadamente sencillos. Descarga y muestras requieren espera más confirmación/selección; no son sistemas complejos de varias etapas. La validación de gestos acepta valores del cliente y verifica secuencia, tiempo y distancia; no prueba que haya intervenido una persona.
 - Reparaciones críticas: dos terminales diferentes, dos jugadores diferentes dentro de una ventana de ocho segundos. Cualquier terminal sirve; no se limitan a paneles exclusivos de oxígeno/reactor. Luces/comunicaciones se reparan desde un terminal. Puertas bloqueadas duran 15 segundos y también pueden repararse.
 - Los impostores pueden aparentar trabajo acercándose a paneles, pero no tienen un minijuego de tarea falsa específico.
@@ -61,7 +61,7 @@ La última ejecución de carga tardó 5,39 segundos: 2.600 confirmaciones, media
 ## Pendientes respecto del documento original
 
 - Verificar disponibilidad y latencia desde la escuela, partida completa de 15–20 minutos, 26 navegadores físicos y controles táctiles en Android.
-- Implementadas presentación animada del rol, expulsión espacial, transición a fantasma y entrada del panel final. Se pueden omitir y respetan movimiento reducido. Añadidas eliminación sin violencia gráfica, caída de jugadores observados y entrada/salida de conductos para el propio jugador y el docente. No se transmiten datos nuevos de jugadores ocultos. Pendientes: secuencias diferenciadas de victoria/derrota.
+- Implementadas presentación animada del rol, expulsión espacial, transición a fantasma y entrada del panel final. Se pueden omitir y respetan movimiento reducido. Añadidas eliminación sin violencia gráfica, caída de jugadores observados y entrada/salida de conductos para el propio jugador y el docente. No se transmiten datos nuevos de jugadores ocultos. Añadidas pantallas diferenciadas de victoria/derrota según el equipo, también para fantasmas.
 - Añadir puertas automáticas normales, accesorios/patrones por personaje, minimapa permanente, estadísticas individuales completas y optimización avanzada.
 - Pruebas de accesibilidad con el grupo, balance de roles/tareas, revisión externa de seguridad y soporte de desconexiones prolongadas en redes escolares.
 

@@ -583,6 +583,7 @@ export function snapshot(r: Room, viewer?: Player) {
   const tasks = ps.filter((p) => p.role === "crew").flatMap((p) => p.tasks);
   return {
     code: r.code,
+    visionRadius: vision,
     admin,
     phase: r.phase,
     paused: r.paused,

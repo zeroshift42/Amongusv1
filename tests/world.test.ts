@@ -47,3 +47,23 @@ test("all rooms, tasks and vents reachable through collision-safe corridors", ()
   assert.equal(walkable(WORLD.width, WORLD.height), false);
   assert.equal(lineOfSight(start, { x: 0, y: 0 }), false);
 });
+
+test("lighting rays stop at walls and shrink with sabotaged vision", async () => {
+  const { visibilityRays, distance } = await import("../src/shared/world.js");
+  for (const room of ROOMS) {
+    const origin = { x: room.x + room.w / 2, y: room.y + room.h / 2 };
+    const normal = visibilityRays(origin, 400);
+    const dark = visibilityRays(origin, 140);
+    assert.equal(normal.length, 128);
+    for (let i = 0; i < normal.length; i++) {
+      assert.ok(distance(origin, normal[i]) <= 400.00001);
+      assert.ok(distance(origin, dark[i]) <= 140.00001);
+      assert.ok(
+        distance(origin, dark[i]) <= distance(origin, normal[i]) + 0.00001,
+      );
+    }
+  }
+  const origin = { x: ROOMS[0].x + 20, y: ROOMS[0].y + 20 };
+  assert.ok(visibilityRays(origin, 400).some((p) => distance(origin, p) < 40));
+  assert.ok(visibilityRays(origin, 0).every((p) => distance(origin, p) === 0));
+});

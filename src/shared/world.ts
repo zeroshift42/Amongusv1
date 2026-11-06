@@ -224,3 +224,23 @@ export function lineOfSight(a: Point, b: Point) {
   }
   return true;
 }
+
+/** Rays stop at the first wall; endpoints are used only for client lighting. */
+export function visibilityRays(
+  origin: Point,
+  radius: number,
+  count = 128,
+): Point[] {
+  const limit = Math.max(0, Math.min(radius, 600));
+  return Array.from({ length: count }, (_, i) => {
+    const angle = (i / count) * Math.PI * 2;
+    const dx = Math.cos(angle),
+      dy = Math.sin(angle);
+    let length = 0;
+    for (let next = 8; next <= limit; next += 8) {
+      if (!inside(origin.x + dx * next, origin.y + dy * next)) break;
+      length = next;
+    }
+    return { x: origin.x + dx * length, y: origin.y + dy * length };
+  });
+}

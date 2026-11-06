@@ -1720,3 +1720,55 @@ body[data-quality="low"] .hero-crew > div {
     display: none;
   }
 }
+
+.results.victory {
+  border-color: #50d7cb;
+  background: radial-gradient(ellipse at top, #174c48, #101a2b 65%);
+}
+.results.defeat {
+  border-color: #cf607a;
+  background: radial-gradient(ellipse at top, #452033, #101a2b 65%);
+}
+.result-emblem {
+  font-size: 72px;
+  line-height: 1.1;
+  color: #a7b6d5;
+}
+.victory .result-emblem {
+  color: #70f2d9;
+  animation: victory-star 1.2s ease-out both;
+}
+.defeat .result-emblem {
+  color: #f38da6;
+  animation: defeat-emblem 1.2s ease-out both;
+}
+.result-outcome {
+  margin: 12px 0;
+  letter-spacing: 0.12em;
+  font-weight: bold;
+}
+@keyframes victory-star {
+  from {
+    transform: scale(0.2) rotate(-150deg);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1) rotate(0);
+    opacity: 1;
+  }
+}
+@keyframes defeat-emblem {
+  from {
+    transform: translateY(-30px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .result-emblem {
+    animation: none !important;
+  }
+}

@@ -8,6 +8,7 @@ import {
   VENTS,
   COLORS,
   distance,
+  visibilityRays,
 } from "../shared/world.js";
 import "./style.css";
 type Data = Record<string, any>;
@@ -473,7 +474,21 @@ function renderOverlay() {
   if (state.phase === "ended") {
     ov.hidden = false;
     ov.className = "";
-    ov.innerHTML = `<section class="results dialog"><div class="eyebrow">MISIÓN FINALIZADA</div><h1>${state.winner === "Tripulantes" ? "¡Victoria tripulante!" : state.winner === "Impostores" ? "¡Victoria impostora!" : "Fin de la misión"}</h1><p>${esc(state.reason || "La tripulación ha vuelto a casa.")}</p><div class="results-crew">${state.players.map((p: Data) => `<div>${astronaut(COLORS[p.color % COLORS.length], 65)}<b>${esc(p.name)}</b><small class="${p.role === "impostor" ? "red" : ""}">${p.role === "impostor" ? "IMPOSTOR" : "TRIPULANTE"}</small></div>`).join("")}</div><p>Tareas completadas: ${state.progress?.done || 0} / ${state.progress?.total || 0}</p>${isAdmin ? '<button class="primary wide" data-admin="reset">Preparar otra misión →</button>' : '<p class="muted">El docente puede preparar una nueva partida.</p>'}</section>`;
+    const hasWinner = ["Tripulantes", "Impostores"].includes(state.winner);
+    const won =
+      hasWinner &&
+      (player()?.role === "impostor"
+        ? state.winner === "Impostores"
+        : state.winner === "Tripulantes");
+    const outcome =
+      isAdmin || !hasWinner ? "neutral" : won ? "victory" : "defeat";
+    const outcomeLabel =
+      isAdmin || !hasWinner
+        ? "MISIÓN FINALIZADA"
+        : won
+          ? "¡TU EQUIPO GANÓ!"
+          : "ESTA VEZ GANÓ EL OTRO EQUIPO";
+    ov.innerHTML = `<section class="results dialog ${outcome}"><div class="result-emblem" aria-hidden="true">${outcome === "victory" ? "✦" : outcome === "defeat" ? "◈" : "◎"}</div><div class="result-outcome">${outcomeLabel}</div><div class="eyebrow">MISIÓN FINALIZADA</div><h1>${state.winner === "Tripulantes" ? "¡Victoria tripulante!" : state.winner === "Impostores" ? "¡Victoria impostora!" : "Fin de la misión"}</h1><p>${esc(state.reason || "La tripulación ha vuelto a casa.")}</p><div class="results-crew">${state.players.map((p: Data) => `<div>${astronaut(COLORS[p.color % COLORS.length], 65)}<b>${esc(p.name)}</b><small class="${p.role === "impostor" ? "red" : ""}">${p.role === "impostor" ? "IMPOSTOR" : "TRIPULANTE"}</small></div>`).join("")}</div><p>Tareas completadas: ${state.progress?.done || 0} / ${state.progress?.total || 0}</p>${isAdmin ? '<button class="primary wide" data-admin="reset">Preparar otra misión →</button>' : '<p class="muted">El docente puede preparar una nueva partida.</p>'}</section>`;
     return;
   }
   ov.hidden = true;
@@ -928,6 +943,8 @@ class ShipScene extends Phaser.Scene {
   markers = new Map<string, Phaser.GameObjects.Container>();
   bodyGraphics!: Phaser.GameObjects.Graphics;
   doorGraphics!: Phaser.GameObjects.Graphics;
+  fogGraphics!: Phaser.GameObjects.Graphics;
+  lastFog = -Infinity;
   keys: any;
   lastMove = 0;
   worldReady = false;
@@ -1055,6 +1072,7 @@ class ShipScene extends Phaser.Scene {
       this.markers.set(t.id, marker);
     }
     this.bodyGraphics = this.add.graphics().setDepth(4);
+    this.fogGraphics = this.add.graphics().setDepth(100);
     this.doorGraphics = this.add.graphics().setDepth(5);
     this.keys = this.input.keyboard!.addKeys("W,A,S,D,UP,DOWN,LEFT,RIGHT");
     this.input.keyboard!.removeCapture(["W", "A", "S", "D", "E", "R", "Q"]);
@@ -1367,6 +1385,26 @@ class ShipScene extends Phaser.Scene {
       a.root.setDepth(10 + a.root.y / 10000);
     }
     const me = this.avatars.get(myId);
+    const dark =
+      !!me?.data.alive && state?.phase === "playing" && !isAdmin && !mapOpen;
+    this.fogGraphics.setVisible(dark);
+    if (dark && me && time - this.lastFog >= 80) {
+      this.lastFog = time;
+      const origin = { x: me.root.x, y: me.root.y };
+      const rays = visibilityRays(origin, state?.visionRadius ?? 400);
+      const outer = rays.map((_, i) => ({
+        x: origin.x + Math.cos((i / rays.length) * Math.PI * 2) * 6000,
+        y: origin.y + Math.sin((i / rays.length) * Math.PI * 2) * 6000,
+      }));
+      this.fogGraphics.clear().fillStyle(0x060b15, 1);
+      for (let i = 0; i < rays.length; i++) {
+        const j = (i + 1) % rays.length;
+        this.fogGraphics.fillPoints(
+          [rays[i], outer[i], outer[j], rays[j]],
+          true,
+        );
+      }
+    }
     if (me && !mapOpen && !isAdmin) {
       this.cameras.main.centerOn(me.root.x, me.root.y);
       const r = ROOMS.find(
