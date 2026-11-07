@@ -309,6 +309,10 @@ footer span {
   float: right;
   letter-spacing: 0;
 }
+#entry {
+  position: relative;
+  z-index: 1;
+}
 #game {
   position: fixed;
   inset: 0;

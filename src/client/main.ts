@@ -21,7 +21,10 @@ const esc = (v: any) =>
         c
       ]!,
   );
-const socket = io({ autoConnect: false });
+const socket = io({
+  autoConnect: false,
+  timeout: 10000,
+});
 let state: Data | null = null,
   myId = "",
   isAdmin = false,
@@ -125,11 +128,33 @@ document.querySelectorAll("[data-tab]").forEach((el) =>
 );
 async function connect() {
   if (socket.connected) return;
-  socket.connect();
-  await new Promise<void>((r) => socket.once("connect", () => r()));
+  await new Promise<void>((resolve, reject) => {
+    const cleanup = () => {
+      clearTimeout(timer);
+      socket.off("connect", ready);
+      socket.off("connect_error", failed);
+    };
+    const ready = () => {
+      cleanup();
+      resolve();
+    };
+    const failed = () => {
+      cleanup();
+      reject(new Error("No se pudo conectar. Intentá nuevamente."));
+    };
+    const timer = setTimeout(failed, 12000);
+    socket.once("connect", ready);
+    socket.once("connect_error", failed);
+    socket.connect();
+  });
 }
 async function enter(admin: boolean) {
-  await connect();
+  try {
+    await connect();
+  } catch {
+    toast("No se pudo conectar. Revisá tu conexión e intentá nuevamente.");
+    return;
+  }
   const result = await request(
     admin ? "admin:create" : "join",
     admin

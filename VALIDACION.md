@@ -66,3 +66,9 @@ La última ejecución de carga tardó 5,39 segundos: 2.600 confirmaciones, media
 - Pruebas de accesibilidad con el grupo, balance de roles/tareas, revisión externa de seguridad y soporte de desconexiones prolongadas en redes escolares.
 
 El estado vive en memoria y se pierde al reiniciar el servidor. No se promete continuidad entre despliegues. No se solicitó ni se generó ningún recurso de pago.
+
+## Revisión del 7 de noviembre de 2026
+
+- Corregida una capa transparente de `#game` que interceptaba los clics del formulario: la entrada tiene ahora su propio orden de apilamiento. Verificado con ingreso real desde Chrome a una sala local con tres clientes de prueba, inicio, reconexión tras recarga y cierre por el docente.
+- El ingreso informa un error si no logra conectar en 12 segundos, en lugar de quedar pendiente indefinidamente.
+- Tipos, 13 pruebas y compilación aprobados. Esta revisión no sustituye la partida completa ni las pruebas en dispositivos escolares.
